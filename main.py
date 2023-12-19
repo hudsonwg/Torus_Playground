@@ -1,6 +1,7 @@
 import math
 import matplotlib.pyplot as plt
 import numpy as np
+import pyaudio as pyaudio
 import pygame
 from matplotlib import animation
 
@@ -169,6 +170,45 @@ def generate_bumpy_sphere_animation():
         # DRAW ANIMATION HERE
         redrawGameWindow()
     pygame.quit()
+def experimental_audio_stuff():
+
+    import pyaudio
+    import wave
+
+    p = pyaudio.PyAudio()
+    host_info = p.get_host_api_info_by_index(0)
+    device_count = host_info.get('deviceCount')
+    devices = []
+
+    # iterate between devices:
+    for i in range(0, device_count):
+        device = p.get_device_info_by_host_api_device_index(0, i)
+        devices.append(device['name'])
+
+    print(devices)
+    CHUNK = 1024
+    FORMAT = pyaudio.paInt16
+    CHANNELS = 2
+    RATE = 44100
+    RECORD_SECONDS = 5
+
+    p = pyaudio.PyAudio()
+
+    stream = p.open(format=FORMAT,
+                    channels=CHANNELS,
+                    rate=RATE,
+                    input=True,
+                    frames_per_buffer=CHUNK)
+    print("* recording")
+    frames = []
+    for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
+        data = stream.read(CHUNK)
+        for each in data:
+            print(each**2)
+    print("* done recording")
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
 if __name__ == '__main__':
     #Check first intuitions function for explanation on how to get started thinking about this
     #first_intuitions()
@@ -178,3 +218,5 @@ if __name__ == '__main__':
     #generate animation, pass in frame generator function
     #generateAnimation(generate_torus_frame)
     generate_bumpy_sphere_animation()
+
+
