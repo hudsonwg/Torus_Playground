@@ -39,7 +39,7 @@ def first_intuitions():
     ax.set_ylim3d(-DIM, DIM)
     ax.set_zlim3d(-DIM, DIM)
     plt.show()
-def generate_frame(A, B):
+def generate_torus_frame(A, B):
     # R2 is radius of torus rotation
     # R1 is radius of circle within torus
     DIM = 10
@@ -68,6 +68,25 @@ def generate_frame(A, B):
             returnFrame.append([xTerm, yTerm, zTerm])
     print(returnFrame)
     return returnFrame
+def generate_bumpy_sphere_frame(A, B):
+    RES1 = 0.1
+    RES2 = 0.1
+    returnFrame = []
+    PARAM1 = 4
+    PARAM2 = A*10
+    PARAM3 = A*2
+    SCALE_FACTOR = 9
+    for theta in np.arange(0, math.pi * 2, RES1):
+        for phi in np.arange(0, math.pi * 2, RES2):
+            radius = SCALE_FACTOR*(1 + (1 / PARAM1) * math.sin(PARAM2 * theta) * math.sin(PARAM3 * phi))
+            xTerm = radius*math.cos(theta)*math.sin(phi)
+            yTerm = radius*math.sin(theta)*math.sin(phi)
+            zTerm = radius*math.sin(phi)
+            returnFrame.append([xTerm, yTerm, zTerm])
+            #ρ(θ, φ) = 1 + 1/5sin(aθ) sin(bφ)
+
+    print(returnFrame)
+    return returnFrame
 def generateFramesDemo():
     DIM = 15
     for A in np.arange(0, 2 * math.pi, 0.1):
@@ -78,13 +97,13 @@ def generateFramesDemo():
         plt.ylim(-DIM, DIM)
         plt.show()
 
-def generateAnimation():
+def generateAnimation(generate_frame):
     FPS = 15
     width = 1000
     height = 1000
     pygame.init()
     win = pygame.display.set_mode((width, height))
-    pygame.display.set_caption("First Game")
+    pygame.display.set_caption("TORUS FOREST EXPLORASAURUS")
     x = 50
     y = 50
     vel = 5
@@ -97,8 +116,7 @@ def generateAnimation():
         Font = pygame.font.SysFont('timesnewroman', 30)
         DIM = 15
         for A in np.arange(0, 2 * math.pi, 0.1):
-
-            win.fill((0, 0, 0))  # <--- this is missing
+            win.fill((0, 0, 0))
             data = generate_frame(A, A)
             for x in data:
                 #plt.scatter(x[0], x[1], color='black')
@@ -118,6 +136,6 @@ if __name__ == '__main__':
     #first_intuitions()
     #now generate set of tuples with generate frame
     #generateFramesDemo()
-    generateAnimation()
 
-
+    #generate animation, pass in frame generator function
+    generateAnimation(generate_bumpy_sphere_frame)
