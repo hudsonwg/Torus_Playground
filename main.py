@@ -72,12 +72,12 @@ def generate_torus_frame(A, B):
 def generate_bumpy_sphere_frame(alpha, beta, gamma, A):
     #make color change param
     RES1 = 0.1
-    RES2 = 0.1
+    RES2 = 0.5
     returnFrame = []
-    PARAM1 = 5
-    PARAM2 = 4
-    PARAM3 = 2*A
-    SCALE_FACTOR = 10
+    PARAM1 = 10
+    PARAM2 = 5
+    PARAM3 = 4*math.cos(A)
+    SCALE_FACTOR = 15+ 0.5*math.cos(A)
     for theta in np.arange(0, math.pi * 2, RES1):
         for phi in np.arange(0, math.pi * 2, RES2):
             radius = SCALE_FACTOR*(1 + (1 / PARAM1) * math.sin(PARAM2 * theta) * math.sin(PARAM3 * phi))
@@ -137,7 +137,7 @@ def generateAnimation(generate_frame):
         redrawGameWindow()
     pygame.quit()
 def generate_bumpy_sphere_animation():
-    FPS = 15
+    FPS = 50
     width = 1000
     height = 1000
     pygame.init()
@@ -154,21 +154,29 @@ def generate_bumpy_sphere_animation():
         orange = (255, 100, 0)
         Font = pygame.font.SysFont('timesnewroman', 30)
         DIM = 15
-        for A in np.arange(0, 2*math.pi, 0.1):
+        for A in np.arange(0, 2*math.pi, 0.01):
+
             win.fill((0, 0, 0))
             data = generate_bumpy_sphere_frame(A, A, A, A)
             for x in data:
                 # plt.scatter(x[0], x[1], color='black')
                 # DRAW TO COORDINATE
                 win.blit(Font.render(".", False, (255, 255, 255)), (20 * x[0] + width / 2, 20 * x[1] + height / 2))
+
+            #THIS LINE RENDERS EACH FRAME TO FILE
+            #pygame.image.save(win, "lottie/screenshot"+str(A)+".jpeg")
+
             pygame.time.Clock().tick(FPS)
             pygame.display.update()
+        return False
+
 
     run = True
     while run:
         # pygame.time.delay(100)
         # DRAW ANIMATION HERE
-        redrawGameWindow()
+        #THIS MAKES IT RUN FOR A SINGLE ITERATION BECAUSE THE FUNCTION RETURNS FALSE WHICH BREAKS THE LOOP
+        run = redrawGameWindow()
     pygame.quit()
 def experimental_audio_stuff():
 
@@ -212,7 +220,24 @@ def experimental_audio_stuff():
 
 
 
+def generate_video():
+    import cv2
+    import os
 
+    image_folder = 'lottie'
+    video_name = 'video.avi'
+
+    images = [img for img in os.listdir(image_folder) if img.endswith(".jpeg")]
+    frame = cv2.imread(os.path.join(image_folder, images[0]))
+    height, width, layers = frame.shape
+
+    video = cv2.VideoWriter(video_name, 0, 1, (width, height))
+
+    for image in images:
+        video.write(cv2.imread(os.path.join(image_folder, image)))
+
+    cv2.destroyAllWindows()
+    video.release()
 if __name__ == '__main__':
     #Check first intuitions function for explanation on how to get started thinking about this
     #first_intuitions()
@@ -221,8 +246,11 @@ if __name__ == '__main__':
 
     #generate animation, pass in frame generator function
     #generateAnimation(generate_torus_frame)
+
     generate_bumpy_sphere_animation()
     #experimental_audio_stuff()
+
+    #generate_video()
 
 
 
