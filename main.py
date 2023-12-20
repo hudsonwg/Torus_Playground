@@ -75,8 +75,8 @@ def generate_bumpy_sphere_frame(alpha, beta, gamma, A):
     RES2 = 0.1
     returnFrame = []
     PARAM1 = 5
-    PARAM2 = 2
-    PARAM3 = 2*alpha
+    PARAM2 = 4
+    PARAM3 = 2*A
     SCALE_FACTOR = 10
     for theta in np.arange(0, math.pi * 2, RES1):
         for phi in np.arange(0, math.pi * 2, RES2):
@@ -194,21 +194,25 @@ def experimental_audio_stuff():
 
     p = pyaudio.PyAudio()
 
-    stream = p.open(format=FORMAT,
-                    channels=CHANNELS,
-                    rate=RATE,
-                    input=True,
-                    frames_per_buffer=CHUNK)
+    stream = p.open(format=FORMAT,channels=CHANNELS,rate=RATE,input=True,frames_per_buffer=CHUNK)
     print("* recording")
     frames = []
+
+
     for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
         data = stream.read(CHUNK)
         for each in data:
             print(each**2)
+
+
     print("* done recording")
     stream.stop_stream()
     stream.close()
     p.terminate()
+
+
+
+
 if __name__ == '__main__':
     #Check first intuitions function for explanation on how to get started thinking about this
     #first_intuitions()
@@ -218,5 +222,13 @@ if __name__ == '__main__':
     #generate animation, pass in frame generator function
     #generateAnimation(generate_torus_frame)
     generate_bumpy_sphere_animation()
+    #experimental_audio_stuff()
+
+
+
+
+
+
+
 
 
